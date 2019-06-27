@@ -1,5 +1,5 @@
 # Discord-Hack-Week-Harpocrates
-A simple to use discord cryptography bot 
+is simple to use open source discord cryptography bot 
 
 Harpocrates has 2 main cyther methods:
 
