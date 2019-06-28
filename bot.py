@@ -870,7 +870,7 @@ async def FB(ctx, message = 'passed'):
 
     if message != 'passed':
 
-        await log2fbServer(f'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n```\nauthor = {ctx.message.author}, server =  {ctx.message.guild}\n```\n```\n{message}\n```')
+        await log2fbServer(f'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n```\nauthor = {ctx.message.author}, server =  {ctx.message.guild}\n```\n```\n{message}\n```')
 
 @client.command()
 async def man(ctx, *, com = 'passed'):
