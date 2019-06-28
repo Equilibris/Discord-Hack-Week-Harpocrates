@@ -31,8 +31,10 @@ parser.read('cfg.ini')
 
 token = parser.get('setings', 'token')
 logServerId = parser.get('setings', 'logserver')
+FBServerId = parser.get('setings', 'FBServer')
 
 logServerId = int(logServerId)
+FBServerId = int(FBServerId)
 
 async def tactical_pause(num = 0):
 
@@ -48,6 +50,13 @@ async def tactical_pause(num = 0):
 
 
         await client.change_presence(activity=discord.Game(name=f'send {commandPrefix}help for help'))
+
+        num = 2
+
+    elif num == 2:
+
+
+        await client.change_presence(activity=discord.Game(name=f'my ping is {round(client.latency *1000)}ms'))
 
         num = 0
 
@@ -449,6 +458,12 @@ async def log(message):
     channel = client.get_channel(logServerId)
     await channel.send(message)
 
+async def log2fbServer(message):
+
+    channel = client.get_channel(FBServerId)
+    await channel.send(message)
+
+
 # Users control commands
 
 def writeUsers(users):
@@ -592,7 +607,10 @@ async def source(ctx):
 
             print("```python\n" + parts[0] + "\n```")
 
-            await ctx.send("```python\n" + parts[0] + "\n```")
+            try:
+                await ctx.send("```python\n" + parts[0] + "\n```")
+            except Exception as e:
+                await ctx.send(f'an error ocoured\n```\n{e}\n```')
 
             parts.pop(0)
 
@@ -683,7 +701,7 @@ async def allSets(ctx, *, com = 'PASSED for auto fail'):
 
     elif com.lower()  == 'modes':
 
-        await ctx.send(f'hears all our modes for encryptting:\n```\n{modesForE}\n```\nand hears all our modes for decrypting:\n```\n{modesForD}\n```')
+        await ctx.send(f'hears all our modes for encrypting:\n```\n{modesForE}\n```\nand hears all our modes for decrypting:\n```\n{modesForD}\n```')
 
     elif com.lower() == 'passed for auto fail':
 
@@ -832,8 +850,6 @@ async def fernet(ctx, pwordHashFormula = 'SHA512', mode='e',key='MS', *,message=
 
     await ctx.send(output)
 
-# end crypto commads # end crypto commads # end crypto commads # end crypto commads # end crypto commads # end crypto commads # end crypto commads
-
 @client.command()
 async def pulseLock(ctx, *, PLinput = 'passed'):
 
@@ -841,16 +857,87 @@ async def pulseLock(ctx, *, PLinput = 'passed'):
 
     await czrCode(ctx, 'e', 'ascii', '17', 'syntax error')
 
+# end crypto commads # end crypto commads # end crypto commads # end crypto commads # end crypto commads # end crypto commads # end crypto commads
+
+@client.command()
+async def ping(ctx):
+    await ctx.send(f'my ping is {round(client.latency *1000)}ms')
+
+    await log(f'\nping to server `{ctx.message.guild}` is `{client.latency *1000}ms`')
+
+@client.command()
+async def FB(ctx, message = 'passed'):
+
+    if message != 'passed':
+
+        await log2fbServer(f'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n```\nauthor = {ctx.message.author}, server =  {ctx.message.guild}\n```\n```\n{message}\n```')
+
+@client.command()
+async def man(ctx, *, com = 'passed'):
+
+    allcoms = [
+
+        'help',
+        'source',
+        'dmMe',
+        'allSets',
+        'czrCode',
+        'fernet',
+        'man',
+        'FB',
+        'ping'
+
+
+    ]
+
+    if com == 'passed':
+        await ctx.send(f'heres all our manual entrys\n```\n{allcoms}\n```')
+
+    elif com == 'help':
+        await ctx.send(f'```\nHelp displays a list of all commands and a simple description of how to use them\n```')
+
+    elif com == 'source':
+        await ctx.send(f'```\nSource gathers source code through the help of opening self and replacing confidential information and series of three ` to make a uniform output\n```')
+
+    elif com == 'dmMe':
+        await ctx.send(f'```\nOpens a dm channel between @{ctx.message.author}/the author of this massage and myself \n```')
+
+    elif com == 'allSets':
+        await ctx.send(f'```\nSends a list of all types in a set for example all hashes\n```')
+
+    elif com == 'czrCode':
+        await ctx.send(f'```\nczrCode runs a Caesar encryption method on the input message. This takes in arguments: Mode which is a Harpocrates mode class (you can view all modes with command {commandPrefix}allsets modes). Character set aka alphabet used, this must be common with the both message and the expected output this is a Harpocrates chrSet class (you can view all chrSet with command {commandPrefix}allsets chrSet). Key which is a standard integer / whole number. Message which is just a normal string which can include spaces. You can learn more abought Caesar ciphers in https://en.wikipedia.org/wiki/Caesar_cipher\n```')
+
+    elif com == 'fernet':
+        await ctx.send(f'```\nfernet runs a fernet encryption on the input message. This takes in arguments: Hash which is a Harpocrates hash method (you can view all hash methods with command {commandPrefix}allsets hashs). Mode which is a Harpocrates mode class (you can view all modes with command {commandPrefix}allsets modes). Key  which is just a normal string which CAN NOT include spaces. Message which is just a normal string which can include spaces. You can learn more abought Caesar ciphers in https://cryptography.io/en/latest/fernet/ or https://en.wikipedia.org/wiki/Symmetric-key_algorithm but this is a much broader topic than the python documentation \n```')
+
+    elif com == 'man':
+        await ctx.send(f'```\ngets a manual entry on a command from {allcoms}. This takes in argument com which is the command you are using in your search \n```')
+
+    elif com == 'FB':
+        await ctx.send(f'```\nSends feedback to my devs, this can be everything from bugreports to new chrsets (for example if you have a alphabet we do not include for example French, Japanese or Russian, if you do please send in this format: .FB your username and tag(so we can dm you once we have added it) name of alphabet then the entire alphabet in lowercase then /// and then entire alphabet in uppercase then /// then all the numbers in order lowest (0) to highest). This takes in argument Message which is just a normal string which can include spaces\n```')
+
+    elif com == 'ping':
+        await ctx.send(f'```\nSends ping in ms\n```')
+
 @client.command()#name = 'help')
 async def help(ctx):
 
     commands = [
+
         [f'{commandPrefix}help', 'shows help'],
-        [f'{commandPrefix}source', 'sends the entire source in the channel requesing it'],
-        [f'{commandPrefix}dmMe', 'dm\'s the author of the message (just for testing)'],
+        [f'{commandPrefix}source', 'sends the entire source in the channel'],
+        [f'', 'requesing it'],
+        [f'{commandPrefix}dmMe', 'dm\'s the author of the message'],
+        [f'', '(just for testing)'],
         [f'{commandPrefix}allSets set', 'sends a list of all sets for set'],
-        [f'{commandPrefix}czrCode mode chrset key M', 'Cesar encrypts m by'],
-        [f' ', 'theversing the chrset with key'],
+        [f'{commandPrefix}czrCode mode chrset key M', 'Cesar encrypts M by theversing'],
+        [f' ', 'the chrset with key message'],
+        [f'{commandPrefix}fernet HASH mode key M', 'encrypts M with key after'],
+        ['','it has been hashed with algorithm HASH'],
+        [f'{commandPrefix}man arg', 'opens manual on command arg'],
+        [f'{commandPrefix}FB feedback', 'sends feedback or reports a bug to'],
+        ['','FB server'],
         [f'{commandPrefix}ping', 'shows ping']
 
     ]
