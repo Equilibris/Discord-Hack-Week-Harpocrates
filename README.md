@@ -14,3 +14,5 @@ Harpocrates has 2 main cyther methods:
 		key that’s a single string with no whitespaces in itself 
 		message is a string
 
+if you wish to add Harpocrates to your discord server use the link below:
+https://discordapp.com/api/oauth2/authorize?client_id=592781301535473705&permissions=35840&scope=bot
