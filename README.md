@@ -18,5 +18,4 @@ if you wish to add Harpocrates to your discord server use the link below:
 https://discordapp.com/api/oauth2/authorize?client_id=592781301535473705&permissions=35840&scope=bot
 
 Credits:
-	Equilibris#2431
-	Tankie#8595
+	Equilibris#2431 and Tankie#8595
