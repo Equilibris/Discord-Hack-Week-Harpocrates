@@ -17,6 +17,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+# split here
+
 commandPrefix = '.'
 
 client = commands.Bot(command_prefix = f'{commandPrefix}')
@@ -32,7 +34,28 @@ logServerId = parser.get('setings', 'logserver')
 
 logServerId = int(logServerId)
 
-print(logServerId)
+async def tactical_pause(num = 0):
+
+    await asyncio.sleep(5)
+
+    if num == 0:
+
+        await client.change_presence(activity=discord.Game(name=f'with ones and zeros'))
+
+        num = 1
+
+    elif num == 1:
+
+
+        await client.change_presence(activity=discord.Game(name=f'send {commandPrefix}help for help'))
+
+        num = 0
+
+
+    await tactical_pause(num)
+
+
+# split here
 
 datalimit = 3
 
@@ -40,10 +63,12 @@ chrsets = {
 
     'ascii' : r'!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~',
     'english' : 'abcdefghijklmnopqrstuvwxyz',
+    'english(caps)' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     'english+caps' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
     'english+nums' : '0123456789abcdefghijklmnopqrstuvwxyz',
     'english+caps+nums' : '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
     'norwegian' : 'abcdefghijklmnopqrstuvwxyzæøå',
+    'norwegian(caps)' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ',
     'norwegian+caps' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅabcdefghijklmnopqrstuvwxyzæøå',
     'norwegian+nums' : '0123456789abcdefghijklmnopqrstuvwxyzæøå',
     'norwegian+nums+caps' : '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅabcdefghijklmnopqrstuvwxyzæøå'
@@ -506,11 +531,11 @@ async def resetUserInfo(ctx, username):
 @client.event
 async def on_ready():
 
-    await client.change_presence(activity=discord.Game(name=f'with ones and zeros'))
-
     print(f'Bot is online\n')
 
     await log("bot has booted and no errors ocured")
+
+    await tactical_pause(0)
 
 @client.event
 async def on_message(msg):
@@ -524,34 +549,6 @@ async def on_message(msg):
 @client.event
 async def on_member_join(member):
     pass
-
-@client.command()#name = 'help')
-async def help(ctx):
-
-    commands = [
-        [f'{commandPrefix}help', 'shows help'],
-        [f'{commandPrefix}source', 'sends the entire source in the channel requesing it'],
-        [f'{commandPrefix}dmMe', 'dm\'s the author of the message (just for testing)'],
-        [f'{commandPrefix}allSets set', 'sends a list of all sets for set'],
-        [f'{commandPrefix}commands', 'shows help'],
-        [f'{commandPrefix}commands', 'shows help'],
-        [f'{commandPrefix}commands', 'shows help'],
-        [f'{commandPrefix}commands', 'shows help'],
-        [f'{commandPrefix}commands', 'shows help'],
-        [f'{commandPrefix}commands', 'shows help'],
-        [f'{commandPrefix}ping', 'shows ping']
-
-    ]
-
-    msg = "```\nThis is a list of all our commands\n\n"
-
-    for i in commands:
-        msg += i[0] + " " * (15 - len(i[0])) + i[1] + "\n"
-
-    msg = msg[:-1] + "\n```"
-
-    await ctx.send(msg)
-    print(f'\nhelp ls in {ctx}')
 
 @client.command(name = "eval")
 async def _eval(ctx, *, code):
@@ -591,9 +588,12 @@ async def source(ctx):
 
             c = c.replace('```', '` ` ` `') # this removes any formating isuses
 
-            parts = c.split("a" + "s" + "ync def ")
+            parts = c.split("a" + "s" + "ync def " or '# ' + 'split ' + 'here')
+
+            print("```python\n" + parts[0] + "\n```")
 
             await ctx.send("```python\n" + parts[0] + "\n```")
+
             parts.pop(0)
 
             doCmd = False
@@ -630,7 +630,7 @@ async def source(ctx):
 
                 except Exception as e:
 
-                    await ctx.send(f"Could not gather source code!\n```{e}```")
+                    await ctx.send(f"Could not gather source code!\n```{e}```\ngoto `https://github.com/Equilibris/Discord-Hack-Week-Harpocrates/blob/master/bot.py` for the full source")
 
     except Exception as e:
         await ctx.send(f"Could not gather source code!\n```{e}```")
@@ -660,8 +660,9 @@ async def allSets(ctx, *, com = 'PASSED for auto fail'):
 
     arg=[
 
-        'czr',
-        'hashes'
+        'chrsets',
+        'hashes',
+        'modes'
 
     ]
 
@@ -679,6 +680,10 @@ async def allSets(ctx, *, com = 'PASSED for auto fail'):
     elif com.lower()  == 'hashes':
 
         await ctx.send(f'hears all our hash algorithms:\n```\n{allHashes}\n```')
+
+    elif com.lower()  == 'modes':
+
+        await ctx.send(f'hears all our modes for encryptting:\n```\n{modesForE}\n```\nand hears all our modes for decrypting:\n```\n{modesForD}\n```')
 
     elif com.lower() == 'passed for auto fail':
 
@@ -708,7 +713,7 @@ async def czrCode(ctx, mode = 'e', chrset = 'ascii', key = 17, *, message = 'MS'
             await ctx.send(newMessage)
 
         else:
-            await ctx.send(f'chrset \'{chrset}\'')
+            await ctx.send(f'chrset \'{chrset}\' does not exsist')
 
     elif mode in modesForD:
 
@@ -835,5 +840,29 @@ async def pulseLock(ctx, *, PLinput = 'passed'):
     await ctx.send('pulseLock is a WIP cryptography programing / pipeline syntax language')
 
     await czrCode(ctx, 'e', 'ascii', '17', 'syntax error')
+
+@client.command()#name = 'help')
+async def help(ctx):
+
+    commands = [
+        [f'{commandPrefix}help', 'shows help'],
+        [f'{commandPrefix}source', 'sends the entire source in the channel requesing it'],
+        [f'{commandPrefix}dmMe', 'dm\'s the author of the message (just for testing)'],
+        [f'{commandPrefix}allSets set', 'sends a list of all sets for set'],
+        [f'{commandPrefix}czrCode mode chrset key M', 'Cesar encrypts m by'],
+        [f' ', 'theversing the chrset with key'],
+        [f'{commandPrefix}ping', 'shows ping']
+
+    ]
+
+    msg = "```\nThis is a list of all our commands\n\n"
+
+    for i in commands:
+        msg += i[0] + " " * (30 - len(i[0])) + i[1] + "\n"
+
+    msg = msg[:-1] + "\n```"
+
+    await ctx.send(msg)
+    print(f'\nhelp ls in {ctx}')
 
 client.run(token)
