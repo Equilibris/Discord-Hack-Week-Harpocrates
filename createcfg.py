@@ -6,6 +6,7 @@ config['setings'] = {
 
     'token' : r'YourTokenHere',
     'logServer' : 'LogSrverIdHere'
+    'FBServer' : 'FBServerIdHere'
 
 }
 
